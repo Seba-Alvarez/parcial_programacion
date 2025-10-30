@@ -1,4 +1,5 @@
-from Usuarios import Usuarios
+# Lógica - Docentes.py
+from .Usuarios import Usuarios
 
 class Docentes(Usuarios):
     def __init__(self, nombreU, edad, userD, passD):

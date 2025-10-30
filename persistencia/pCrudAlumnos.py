@@ -1,85 +1,75 @@
+# Persistencia - pCrudAlumnos.py
 import sqlite3
 
-class CrudDocentesSQLite:
-    def __init__(self, db_name="docentes.db"):
+class pCrudAlumnos:
+    """
+    Persistencia SQLite para alumnos.
+    """
+    def __init__(self, db_name="alumnos.db"):
         self.conn = sqlite3.connect(db_name)
         self.cursor = self.conn.cursor()
         self.crear_tabla()
 
     def crear_tabla(self):
         self.cursor.execute("""
-            CREATE TABLE IF NOT EXISTS docentes (
+            CREATE TABLE IF NOT EXISTS alumnos (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 nombreU TEXT,
                 edad INTEGER,
-                userD TEXT UNIQUE,
-                passD TEXT
+                userA TEXT UNIQUE,
+                passA TEXT
             )
         """)
         self.conn.commit()
 
-    def alta(self, docente):
+    def alta(self, alumno):
         try:
             self.cursor.execute("""
-                INSERT INTO docentes (nombreU, edad, userD, passD)
+                INSERT INTO alumnos (nombreU, edad, userA, passA)
                 VALUES (?, ?, ?, ?)
-            """, (docente.nombreU, docente.edad, docente.userD, docente.passD))
+            """, (alumno.nombreU, alumno.edad, alumno.userA, alumno.passA))
             self.conn.commit()
-            print(f"Docente '{docente.userD}' agregado correctamente.")
+            return True, f"Alumno '{alumno.userA}' agregado correctamente."
         except sqlite3.IntegrityError:
-            print(f"Error: el usuario '{docente.userD}' ya existe.")
+            return False, f"Error: el usuario '{alumno.userA}' ya existe."
 
-    def baja(self, userD):
-        self.cursor.execute("DELETE FROM docentes WHERE userD = ?", (userD,))
+    def baja(self, userA):
+        self.cursor.execute("DELETE FROM alumnos WHERE userA = ?", (userA,))
         self.conn.commit()
-        if self.cursor.rowcount > 0:
-            print(f"Docente '{userD}' eliminado correctamente.")
-        else:
-            print(f"Docente '{userD}' no encontrado.")
+        return self.cursor.rowcount > 0
 
-    def modificar(self, userD, new_nombreU=None, new_edad=None, new_userD=None, new_passD=None):
+    def modificar(self, userA, new_nombreU=None, new_edad=None, new_userA=None, new_passA=None):
         campos = []
         valores = []
 
         if new_nombreU:
             campos.append("nombreU = ?")
             valores.append(new_nombreU)
-        if new_edad:
+        if new_edad is not None:
             campos.append("edad = ?")
             valores.append(new_edad)
-        if new_userD:
-            campos.append("userD = ?")
-            valores.append(new_userD)
-        if new_passD:
-            campos.append("passD = ?")
-            valores.append(new_passD)
+        if new_userA:
+            campos.append("userA = ?")
+            valores.append(new_userA)
+        if new_passA:
+            campos.append("passA = ?")
+            valores.append(new_passA)
 
         if campos:
-            valores.append(userD)
-            consulta = f"UPDATE docentes SET {', '.join(campos)} WHERE userD = ?"
+            valores.append(userA)
+            consulta = f"UPDATE alumnos SET {', '.join(campos)} WHERE userA = ?"
             self.cursor.execute(consulta, valores)
             self.conn.commit()
-            if self.cursor.rowcount > 0:
-                print(f"Docente '{userD}' modificado correctamente.")
-            else:
-                print(f"Docente '{userD}' no encontrado.")
-        else:
-            print("No se proporcionaron datos para modificar.")
+            return self.cursor.rowcount > 0
+        return False
 
     def listar(self):
-        self.cursor.execute("SELECT nombreU, edad, userD, passD FROM docentes")
-        docentes = self.cursor.fetchall()
-        if docentes:
-            for d in docentes:
-                print(f"Nombre: {d[0]}, Edad: {d[1]}, Usuario: {d[2]}, Contraseña: {d[3]}")
-        else:
-            print("No hay docentes registrados.")
+        self.cursor.execute("SELECT nombreU, edad, userA, passA FROM alumnos")
+        return self.cursor.fetchall()
 
     def ordenar(self):
-        self.cursor.execute("SELECT nombreU, edad, userD, passD FROM docentes ORDER BY nombreU")
-        docentes = self.cursor.fetchall()
-        for d in docentes:
-            print(f"Nombre: {d[0]}, Edad: {d[1]}, Usuario: {d[2]}, Contraseña: {d[3]}")
+        self.cursor.execute("SELECT nombreU, edad, userA, passA FROM alumnos ORDER BY nombreU")
+        return self.cursor.fetchall()
 
     def cerrar_conexion(self):
         self.conn.close()

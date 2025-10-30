@@ -1,20 +1,32 @@
+# Lógica - CrudDocentes.py
+from .Docentes import Docentes
+
 class CrudDocentes:
-    def __init__(self):
+    def __init__(self, pers=None):
         self.docentes = []
+        self.pers = pers
 
     def alta(self, docente):
+        if self.pers:
+            ok, msg = self.pers.alta(docente)
+            return ok, msg
         self.docentes.append(docente)
-        print(f"Docente '{docente.userD}' agregado correctamente.")
+        return True, f"Docente '{docente.userD}' agregado correctamente."
 
     def baja(self, userD):
+        if self.pers:
+            ok = self.pers.baja(userD)
+            return ok, ("Eliminado" if ok else "No encontrado")
         for docente in self.docentes:
             if docente.userD.lower() == userD.lower():
                 self.docentes.remove(docente)
-                print(f"Docente '{userD}' eliminado correctamente.")
-                return
-        print(f"Docente '{userD}' no encontrado.")
+                return True, f"Docente '{userD}' eliminado correctamente."
+        return False, f"Docente '{userD}' no encontrado."
 
     def modificar(self, userD, new_nombreU=None, new_edad=None, new_userD=None, new_passD=None):
+        if self.pers:
+            ok = self.pers.modificar(userD, new_nombreU=new_nombreU, new_edad=new_edad, new_userD=new_userD, new_passD=new_passD)
+            return ok, ("Modificado" if ok else "No encontrado")
         for docente in self.docentes:
             if docente.userD.lower() == userD.lower():
                 if new_nombreU:
@@ -25,17 +37,16 @@ class CrudDocentes:
                     docente.set_userD(new_userD)
                 if new_passD:
                     docente.set_passD(new_passD)
-                print(f"Docente '{userD}' modificado correctamente.")
-                return
-        print(f"Docente '{userD}' no encontrado.")
+                return True, f"Docente '{userD}' modificado correctamente."
+        return False, f"Docente '{userD}' no encontrado."
 
     def listar(self):
-        if not self.docentes:
-            print("No hay docentes registrados.")
-        else:
-            for docente in self.docentes:
-                print(docente)
+        if self.pers:
+            return self.pers.listar()
+        return [str(d) for d in self.docentes]
 
     def ordenar(self):
+        if self.pers:
+            return self.pers.ordenar()
         self.docentes.sort(key=lambda docente: docente.nombreU)
-        print("Docentes ordenados por nombre.")
+        return [str(d) for d in self.docentes]

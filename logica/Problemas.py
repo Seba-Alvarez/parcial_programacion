@@ -1,3 +1,4 @@
+# Lógica - Problemas.py
 class Problemas:
     def __init__(self, descripcion, dificultad, lenguaje, aprobado):
         self.descripcion = descripcion

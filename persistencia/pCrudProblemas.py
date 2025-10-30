@@ -1,6 +1,10 @@
+# Persistencia - pCrudProblemas.py
 import sqlite3
 
-class CrudProblemasSQLite:
+class pCrudProblemas:
+    """
+    Persistencia SQLite para problemas.
+    """
     def __init__(self, db_name="problemas.db"):
         self.conn = sqlite3.connect(db_name)
         self.cursor = self.conn.cursor()
@@ -10,26 +14,29 @@ class CrudProblemasSQLite:
         self.cursor.execute("""
             CREATE TABLE IF NOT EXISTS problemas (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
-                descripcion TEXT,
+                descripcion TEXT UNIQUE,
                 dificultad TEXT,
                 lenguaje TEXT,
-                aprobado BOOLEAN
+                aprobado INTEGER
             )
         """)
         self.conn.commit()
 
     def alta(self, problema):
-        self.cursor.execute("""
-            INSERT INTO problemas (descripcion, dificultad, lenguaje, aprobado)
-            VALUES (?, ?, ?, ?)
-        """, (problema.descripcion, problema.dificultad, problema.lenguaje, problema.aprobado))
-        self.conn.commit()
-        print("Problema agregado correctamente.")
+        try:
+            self.cursor.execute("""
+                INSERT INTO problemas (descripcion, dificultad, lenguaje, aprobado)
+                VALUES (?, ?, ?, ?)
+            """, (problema.descripcion, problema.dificultad, problema.lenguaje, int(bool(problema.aprobado))))
+            self.conn.commit()
+            return True, "Problema agregado correctamente."
+        except sqlite3.IntegrityError:
+            return False, "Error: la descripción ya existe."
 
     def baja(self, descripcion):
         self.cursor.execute("DELETE FROM problemas WHERE descripcion = ?", (descripcion,))
         self.conn.commit()
-        print("Problema eliminado correctamente.")
+        return self.cursor.rowcount > 0
 
     def modificar(self, descripcion, new_desc=None, new_dificultad=None, new_lenguaje=None, new_aprobado=None):
         campos = []
@@ -46,28 +53,26 @@ class CrudProblemasSQLite:
             valores.append(new_lenguaje)
         if new_aprobado is not None:
             campos.append("aprobado = ?")
-            valores.append(new_aprobado)
+            valores.append(int(bool(new_aprobado)))
 
         if campos:
             valores.append(descripcion)
             consulta = f"UPDATE problemas SET {', '.join(campos)} WHERE descripcion = ?"
             self.cursor.execute(consulta, valores)
             self.conn.commit()
-            print("Problema modificado correctamente.")
-        else:
-            print("No se proporcionaron datos para modificar.")
+            return self.cursor.rowcount > 0
+        return False
 
     def listar(self):
         self.cursor.execute("SELECT descripcion, dificultad, lenguaje, aprobado FROM problemas")
-        problemas = self.cursor.fetchall()
-        for p in problemas:
-            print(f"Descripción: {p[0]}, Dificultad: {p[1]}, Lenguaje: {p[2]}, Aprobado: {p[3]}")
+        rows = self.cursor.fetchall()
+        # Convert aprobado from int to bool
+        return [(r[0], r[1], r[2], bool(r[3])) for r in rows]
 
     def ordenar_por_dificultad(self):
         self.cursor.execute("SELECT descripcion, dificultad, lenguaje, aprobado FROM problemas ORDER BY dificultad")
-        problemas = self.cursor.fetchall()
-        for p in problemas:
-            print(f"Descripción: {p[0]}, Dificultad: {p[1]}, Lenguaje: {p[2]}, Aprobado: {p[3]}")
+        rows = self.cursor.fetchall()
+        return [(r[0], r[1], r[2], bool(r[3])) for r in rows]
 
     def cerrar_conexion(self):
         self.conn.close()

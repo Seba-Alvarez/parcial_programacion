@@ -1,3 +1,4 @@
+# Lógica - Usuarios.py
 class Usuarios:
     def __init__(self, nombreU, edad):
         self.nombreU = nombreU

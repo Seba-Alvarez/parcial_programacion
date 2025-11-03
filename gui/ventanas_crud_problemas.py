@@ -7,7 +7,7 @@ from persistencia.pCrudProblemas import pCrudProblemas
 
 class FrameProblemas(ttk.Frame):
     def __init__(self, parent, pers=None):
-        super().__init__(parent)     
+        super().__init__(parent)
         self.pers = pers or pCrudProblemas()
         self.crud = CrudProblemas(self.pers)
         self.build_ui()

@@ -2,9 +2,6 @@
 import sqlite3
 
 class pCrudProblemas:
-    """
-    Persistencia SQLite para problemas.
-    """
     def __init__(self, db_name="problemas.db"):
         self.conn = sqlite3.connect(db_name)
         self.cursor = self.conn.cursor()
@@ -66,7 +63,6 @@ class pCrudProblemas:
     def listar(self):
         self.cursor.execute("SELECT descripcion, dificultad, lenguaje, aprobado FROM problemas")
         rows = self.cursor.fetchall()
-        # Convert aprobado from int to bool
         return [(r[0], r[1], r[2], bool(r[3])) for r in rows]
 
     def ordenar_por_dificultad(self):

@@ -1,4 +1,4 @@
-# Lógica - Problemas.py
+#Aca aplican los mismos comentarios que en Alumnos, con la salvedad que Problemas no esta heredando.
 class Problemas:
     def __init__(self, descripcion, dificultad, lenguaje, aprobado):
         self.descripcion = descripcion

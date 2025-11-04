@@ -1,4 +1,4 @@
-# GUI - ventanas_crud_problemas.py
+#Aca aplican los mismos comentarios que en ventanas_crud_alumnos.
 import tkinter as tk
 from tkinter import ttk, messagebox
 from logica.Problemas import Problemas
@@ -77,7 +77,6 @@ class FrameProblemas(ttk.Frame):
     def refrescar(self):
         for r in self.tree.get_children(): self.tree.delete(r)
         rows = self.crud.listar()
-        # rows may be tuples (descripcion, dificultad, lenguaje, aprobado)
         if rows and isinstance(rows[0], tuple):
             for r in rows:
                 self.tree.insert("", "end", values=(r[0], r[1], r[2], "Sí" if r[3] else "No"))

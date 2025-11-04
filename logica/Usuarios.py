@@ -1,4 +1,4 @@
-# Lógica - Usuarios.py
+#Aca aplican los mismos comentarios que en Alumnos, con la salvedad que esta es su clase padre.
 class Usuarios:
     def __init__(self, nombreU, edad):
         self.nombreU = nombreU

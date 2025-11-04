@@ -1,4 +1,4 @@
-# GUI - ventanas_crud_docentes.py
+#Aca aplican los mismos comentarios que en ventanas_crud_alumnos.
 import tkinter as tk
 from tkinter import ttk, messagebox
 from logica.Docentes import Docentes

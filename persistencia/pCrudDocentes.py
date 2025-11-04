@@ -1,10 +1,8 @@
-# Persistencia - pCrudDocentes.py
+#Aca aplican los mismos comentarios que en pCrudAlumnos.
 import sqlite3
 
 class pCrudDocentes:
-    """
-    Persistencia SQLite para docentes.
-    """
+
     def __init__(self, db_name="docentes.db"):
         self.conn = sqlite3.connect(db_name)
         self.cursor = self.conn.cursor()

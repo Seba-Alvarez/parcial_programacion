@@ -1,4 +1,4 @@
-# Lógica - Docentes.py
+#Aca aplican los mismos comentarios que en Alumnos.
 from .Usuarios import Usuarios
 
 class Docentes(Usuarios):
